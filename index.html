@@ -3,37 +3,104 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Retail Sales SQL Portfolio — dayronknows</title>
+  <title>Retail Sales SQL Portfolio — Dayron</title>
+  <meta name="description" content="Dayron's SQL portfolio: bronze→silver→gold warehouse, KPIs, and business insights from retail sales data." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css">
   <style>
-    :root{--bg:#0b0d11;--card:#121621;--muted:#a9b0c0;--border:#1f2430}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#e7e9ee}
-    .wrap{max-width:980px;margin:48px auto;padding:0 20px} h1{font-size:2rem;margin:0 0 6px} h2{font-size:1.2rem;margin:22px 0 10px}
-    p{line-height:1.55} .meta{color:var(--muted);font-size:.95rem}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:14px 0}
-    pre{background:#0f1320;border:1px solid var(--border);border-radius:12px;overflow:auto} code{font-size:.95rem}
-    img{max-width:100%;border-radius:10px;border:1px solid var(--border)} .pill{display:inline-block;padding:4px 10px;border:1px solid var(--border);border-radius:999px;margin-right:8px;background:#0e1422}
-    .grid{display:grid;gap:14px;grid-template-columns:1fr 1fr} @media (max-width:860px){.grid{grid-template-columns:1fr}} a{color:#8ab4ff}
+    :root{
+      --bg:#0b0d11; --text:#e7e9ee; --muted:#a9b0c0;
+      --card:#121621; --border:#1f2430; --pill:#0e1422; --link:#8ab4ff;
+      --accent:#70e1ff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    a{color:var(--link);text-decoration:none}
+    .wrap{max-width:1040px;margin:38px auto;padding:0 18px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .title{font-size:1.9rem;font-weight:800;letter-spacing:.2px}
+    .nav{display:flex;gap:14px;flex-wrap:wrap}
+    .nav a{font-size:.95rem;color:var(--muted);padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#0e1422}
+    .meta{color:var(--muted);font-size:.95rem}
+    .pill{display:inline-block;padding:4px 10px;border:1px solid var(--border);border-radius:999px;margin-right:8px;background:var(--pill)}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin:16px 0}
+    h2{font-size:1.15rem;margin:0 0 10px}
+    pre{background:#0f1320;border:1px solid var(--border);border-radius:12px;overflow:auto}
+    code{font-size:.95rem}
+    img{max-width:100%;border-radius:10px;border:1px solid var(--border)}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(4,1fr)}
+    @media (max-width:920px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.grid{grid-template-columns:1fr}}
+    footer{margin:32px 0 18px;color:var(--muted);font-size:.9rem}
+    .accent{color:var(--accent)}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Retail Sales SQL Portfolio</h1>
-    <div class="meta">Bronze → Silver → <b>Gold</b> (star schema: <span class="pill">gold.fact_sales</span> <span class="pill">gold.dim_customers</span> <span class="pill">gold.dim_products</span>)</div>
+    <header>
+      <div class="title">Retail Sales SQL Portfolio</div>
+      <nav class="nav">
+        <a href="#about">About</a>
+        <a href="#kpi">KPIs</a>
+        <a href="#trend">Trend</a>
+        <a href="#cumulative">Cumulative</a>
+        <a href="#category">Category</a>
+        <a href="#products">Products</a>
+        <a href="#ltv">Top Customers</a>
+        <a href="#repo">Repo</a>
+      </nav>
+    </header>
 
-    <div class="card">
-  <h2>About & Contact</h2>
-  <p>Hi, I’m Dayron — I build practical data analytics. This project shows SQL warehousing (bronze→silver→gold) and business-focused analysis.</p>
-  <p><a href="https://github.com/dayronknows" target="_blank">GitHub</a> · 
-     <a href="https://www.linkedin.com/in/<your-handle>" target="_blank">LinkedIn</a> · 
-     <a href="mailto:<you>@email.com">email</a></p>
-</div>
+    <div class="meta">
+      Built by Dayron • Warehouse flow: Bronze → Silver → <b>Gold</b>
+      <span class="pill">gold.fact_sales</span>
+      <span class="pill">gold.dim_customers</span>
+      <span class="pill">gold.dim_products</span>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about" class="card">
+      <h2>About & Contact</h2>
+      <p>Hi, I’m Dayron. I build practical, business-focused analytics. This project shows how I stand up a SQL warehouse (bronze → silver → gold), validate the load, and answer real questions with concise queries and clear insights.</p>
+      <p>
+        <a href="https://github.com/dayronknows" target="_blank">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/REPLACE_WITH_YOUR_HANDLE" target="_blank">LinkedIn</a> ·
+        <a href="mailto:REPLACE_WITH_YOUR_EMAIL">email</a>
+      </p>
+    </section>
+
+    <!-- KPIs -->
+    <section id="kpi" class="card">
+      <h2>Key Results (from my run)</h2>
+      <div class="grid">
+        <div>
+          <h3>Total Sales</h3>
+          <p class="meta">$29,356,250</p>
+        </div>
+        <div>
+          <h3>Unique Customers</h3>
+          <p class="meta">18,484</p>
+        </div>
+        <div>
+          <h3>Date Coverage</h3>
+          <p class="meta">2010-12-29 → 2014-01-28</p>
+        </div>
+        <div>
+          <h3>Top Category Share</h3>
+          <p class="meta">Bikes 96.46%</p>
+        </div>
+      </div>
+      <!-- Optional KPI graphic -->
+      <!-- <img src="assets/screenshots/00_kpis.png" alt="KPI snapshot"> -->
+    </section>
+
+    <!-- MONTHLY TREND -->
+    <section id="trend" class="card">
       <h2>Monthly Sales Trend</h2>
       <pre><code class="language-sql">SELECT
-  YEAR(order_date) AS order_year,
+  YEAR(order_date)  AS order_year,
   MONTH(order_date) AS order_month,
   SUM(sales_amount) AS total_sales,
   COUNT(DISTINCT customer_key) AS unique_customers
@@ -41,12 +108,12 @@ FROM gold.fact_sales
 WHERE order_date IS NOT NULL
 GROUP BY YEAR(order_date), MONTH(order_date)
 ORDER BY order_year, order_month;</code></pre>
-      <p class="meta"><em>Insight:</em> Sales peak in Nov–Dec each year (holiday seasonality).</p>
-      <!-- Replace with your screenshot when ready -->
+      <p class="meta"><em>My take:</em> clear holiday seasonality with peaks in <b>Nov–Dec</b> each year.</p>
       <!-- <img src="assets/screenshots/01_monthly_trend.png" alt="Monthly trend"> -->
-    </div>
+    </section>
 
-    <div class="card">
+    <!-- CUMULATIVE -->
+    <section id="cumulative" class="card">
       <h2>Cumulative Sales (Running Total)</h2>
       <pre><code class="language-sql">WITH m AS (
   SELECT DATEFROMPARTS(YEAR(order_date), MONTH(order_date), 1) AS month_start,
@@ -60,26 +127,96 @@ SELECT month_start,
        SUM(monthly_sales) OVER (ORDER BY month_start) AS cumulative_sales
 FROM m
 ORDER BY month_start;</code></pre>
+      <p class="meta"><em>My take:</em> steady accumulation with a visible Q4 acceleration.</p>
       <!-- <img src="assets/screenshots/02_cumulative.png" alt="Cumulative chart"> -->
-    </div>
+    </section>
 
-    <div class="card">
+    <!-- CATEGORY SHARE -->
+    <section id="category" class="card">
+      <h2>Category Share</h2>
+      <pre><code class="language-sql">SELECT TOP 5
+  p.category,
+  SUM(f.sales_amount) AS sales,
+  CAST(SUM(f.sales_amount)*100.0 / SUM(SUM(f.sales_amount)) OVER() AS decimal(5,2)) AS pct_total
+FROM gold.fact_sales f
+JOIN gold.dim_products p ON p.product_key = f.product_key
+GROUP BY p.category
+ORDER BY sales DESC;</code></pre>
+      <p class="meta"><em>My finding:</em> revenue is highly concentrated — <b>Bikes ≈ 96.46%</b>, Accessories 2.39%, Clothing 1.16%.</p>
+      <!-- <img src="assets/screenshots/03_category_share.png" alt="Category share"> -->
+    </section>
+
+    <!-- TOP PRODUCTS -->
+    <section id="products" class="card">
       <h2>Top Products by Revenue</h2>
       <pre><code class="language-sql">SELECT TOP (10)
   p.product_name, p.category,
-  SUM(f.sales_amount) AS total_sales, SUM(f.quantity) AS units
+  SUM(f.sales_amount) AS total_sales,
+  SUM(f.quantity)     AS units
 FROM gold.fact_sales f
 JOIN gold.dim_products p ON p.product_key = f.product_key
 GROUP BY p.product_name, p.category
 ORDER BY total_sales DESC;</code></pre>
-      <!-- <img src="assets/screenshots/03_top_products.png" alt="Top products"> -->
-    </div>
+      <!-- <img src="assets/screenshots/04_top_products.png" alt="Top products"> -->
+    </section>
 
-    <div class="card">
-      <h2>Repo</h2>
-      <p><a href="https://github.com/dayronknows/sql-retail-analytics">github.com/dayronknows/sql-retail-analytics</a></p>
-    </div>
+    <!-- LTV -->
+    <section id="ltv" class="card">
+      <h2>Top Customers (Lifetime Value)</h2>
+      <pre><code class="language-sql">-- Top 10 customers by LTV + order count
+SELECT TOP (10)
+  c.customer_number,
+  c.first_name, c.last_name,
+  SUM(f.sales_amount)            AS lifetime_value,
+  COUNT(DISTINCT f.order_number) AS orders
+FROM gold.fact_sales f
+JOIN gold.dim_customers c ON c.customer_key = f.customer_key
+GROUP BY c.customer_number, c.first_name, c.last_name
+ORDER BY lifetime_value DESC;</code></pre>
+      <p class="meta"><em>My finding:</em> Top 10 customers are ≈ <b>$13k LTV</b> each with ~5–6 orders. Together ≈ <b>$132k</b> (about <b>0.45%</b> of revenue). Top 20 reach <b>0.83%</b>, so revenue is broadly distributed across ~18.5k customers.</p>
+
+      <pre><code class="language-sql">-- Cumulative contribution curve (ranked by LTV)
+WITH cust AS (
+  SELECT c.customer_number, SUM(f.sales_amount) AS ltv
+  FROM gold.fact_sales f
+  JOIN gold.dim_customers c ON c.customer_key = f.customer_key
+  GROUP BY c.customer_number
+),
+r AS (
+  SELECT
+    customer_number,
+    ltv,
+    ROW_NUMBER() OVER (ORDER BY ltv DESC)                              AS rk,
+    SUM(ltv) OVER (ORDER BY ltv DESC ROWS UNBOUNDED PRECEDING)         AS cum_ltv,
+    SUM(ltv) OVER ()                                                   AS total_ltv
+  FROM cust
+)
+SELECT TOP (20)
+  rk, customer_number, ltv,
+  CAST(cum_ltv*100.0/total_ltv AS decimal(6,2)) AS cumulative_pct
+FROM r
+ORDER BY rk;</code></pre>
+      <!-- <img src="assets/screenshots/05_top_customers.png" alt="Top customers cumulative"> -->
+    </section>
+
+    <!-- REPO / NOTES -->
+    <section id="repo" class="card">
+      <h2>Repository & Notes</h2>
+      <p><a href="https://github.com/dayronknows/sql-retail-analytics" target="_blank">github.com/dayronknows/sql-retail-analytics</a></p>
+      <p class="meta">
+        Init script creates the database and loads CSVs, then I validate with row counts and date ranges.  
+        <br>Light indexing applied on <span class="pill">fact_sales(order_date)</span>, <span class="pill">fact_sales(customer_key)</span>, <span class="pill">fact_sales(product_key)</span>.
+      </p>
+      <p class="meta">
+        Acknowledgments: dataset structure inspired by public training materials (MIT-licensed). All analysis, insights, screenshots, and write-up here are my own.
+      </p>
+    </section>
+
+    <footer>
+      © <span class="accent">Dayron</span> · Built with vanilla HTML/CSS + PrismJS · Deployed via GitHub Pages
+    </footer>
   </div>
+
   <script src="https://unpkg.com/prismjs/prism.js"></script>
   <script src="https://unpkg.com/prismjs/components/prism-sql.js"></script>
 </body>
