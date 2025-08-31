@@ -1,41 +1,269 @@
-<!-- INTERACTIVITY -->
-<script>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Retail Sales SQL Portfolio — dayronknows</title>
+
+  <!-- fonts & code theme -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css">
+
+  <style>
+    :root{--bg:#0b0d11;--card:#121621;--border:#1f2430;--muted:#a9b0c0}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#e7e9ee;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    a{color:#8ab4ff;text-decoration:none}
+    .wrap{max-width:1100px;margin:42px auto;padding:0 20px}
+    h1{margin:0 0 6px;font-size:2rem}
+    h2{margin:0 0 10px;font-size:1.1rem}
+    .pill{display:inline-block;padding:4px 10px;border:1px solid var(--border);border-radius:999px;background:#0e1422;margin-right:8px}
+    .meta{color:var(--muted);font-size:.92rem}
+    .card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:14px 0}
+    .grid{display:grid;gap:12px}
+    .grid.kpi{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .k{border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+    .k .label{color:var(--muted);font-size:.9rem}
+    .k .val{margin-top:6px;font-weight:800}
+    .tabs{position:absolute;right:12px;top:12px}
+    .tab-btn{border:1px solid var(--border);background:#0e1420;color:#b7c0d8;border-radius:8px;padding:4px 10px;margin-left:6px;cursor:pointer}
+    .tab-btn.active{color:#fff}
+    .hidden{display:none}
+    pre{background:#0f1320;border:1px solid var(--border);border-radius:12px;padding:12px;overflow:auto}
+    .chart-wrap{height:320px}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+    .chip{border:1px solid var(--border);border-radius:999px;padding:4px 10px;background:#0e1422;color:#c8d0e0;cursor:pointer}
+    .year-chip[data-off]{opacity:.45;text-decoration:line-through}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Retail Sales SQL Portfolio</h1>
+    <div class="meta">
+      Built by Dayron • Warehouse flow: <b>Bronze → Silver → Gold</b>
+      <span class="pill">gold.fact_sales</span><span class="pill">gold.dim_customers</span><span class="pill">gold.dim_products</span>
+    </div>
+
+    <!-- About -->
+    <div class="card">
+      <h2>About & Contact</h2>
+      <p>I build practical, business-focused analytics. This project shows how I stand up a SQL warehouse (bronze→silver→gold), validate the load, and answer real questions with concise queries and clear insights.</p>
+      <p><a href="https://github.com/dayronknows" target="_blank">GitHub</a> ·
+         <a href="https://www.linkedin.com/in/dayronknows" target="_blank">LinkedIn</a> ·
+         <a href="mailto:dayronknows@gmail.com">email</a></p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="card">
+      <h2>Key Results (from my run)</h2>
+      <div class="grid kpi">
+        <div class="k"><div class="label">Total Sales</div><div class="val">$29,356,250</div></div>
+        <div class="k"><div class="label">Unique Customers</div><div class="val">18,484</div></div>
+        <div class="k"><div class="label">Date Coverage</div><div class="val">2010-12-29 → 2014-01-28</div></div>
+        <div class="k"><div class="label">Top Category Share</div><div class="val">Bikes 96.46%</div></div>
+      </div>
+    </div>
+
+    <!-- Monthly Trend -->
+    <div class="card section" id="trend">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="trend" data-view="chart">Chart</button>
+        <button class="tab-btn" data-tab="trend" data-view="code">Code</button>
+      </div>
+      <h2>Monthly Sales Trend</h2>
+
+      <div id="trend-chart">
+        <div id="trend-years" class="chips"></div>
+        <div class="chart-wrap"><canvas id="monthlyChart"></canvas></div>
+        <p class="meta">My take: clear holiday seasonality with peaks in Nov–Dec each year.</p>
+      </div>
+
+      <div id="trend-code" class="hidden">
+        <pre><code class="language-sql">SELECT
+  YEAR(order_date)  AS order_year,
+  MONTH(order_date) AS order_month,
+  SUM(sales_amount) AS total_sales,
+  COUNT(DISTINCT customer_key) AS unique_customers
+FROM gold.fact_sales
+WHERE order_date IS NOT NULL
+GROUP BY YEAR(order_date), MONTH(order_date)
+ORDER BY order_year, order_month;</code></pre>
+      </div>
+    </div>
+
+    <!-- Cumulative -->
+    <div class="card section" id="cumulative">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="cumulative" data-view="chart">Chart</button>
+        <button class="tab-btn" data-tab="cumulative" data-view="code">Code</button>
+      </div>
+      <h2>Cumulative Sales (Running Total)</h2>
+
+      <div id="cumulative-chart">
+        <div class="chart-wrap"><canvas id="cumulativeChart"></canvas></div>
+        <p class="meta">My take: steady accumulation with a visible Q4 acceleration.</p>
+      </div>
+
+      <div id="cumulative-code" class="hidden">
+        <pre><code class="language-sql">WITH m AS (
+  SELECT DATEFROMPARTS(YEAR(order_date), MONTH(order_date), 1) AS month_start,
+         SUM(sales_amount) AS monthly_sales
+  FROM gold.fact_sales
+  WHERE order_date IS NOT NULL
+  GROUP BY DATEFROMPARTS(YEAR(order_date), MONTH(order_date), 1)
+)
+SELECT month_start,
+       monthly_sales,
+       SUM(monthly_sales) OVER (ORDER BY month_start) AS cumulative_sales
+FROM m
+ORDER BY month_start;</code></pre>
+      </div>
+    </div>
+
+    <!-- Category -->
+    <div class="card section" id="category">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="category" data-view="chart">Chart</button>
+        <button class="tab-btn" data-tab="category" data-view="code">Code</button>
+      </div>
+      <h2>Category Share</h2>
+
+      <div id="category-chart">
+        <div class="chart-wrap"><canvas id="categoryChart"></canvas></div>
+        <p class="meta">My finding: highly concentrated — <b>Bikes ≈ 96.46%</b>, Accessories 2.39%, Clothing 1.16%.</p>
+      </div>
+
+      <div id="category-code" class="hidden">
+        <pre><code class="language-sql">SELECT
+  p.category,
+  CAST(SUM(f.sales_amount)*100.0 / SUM(SUM(f.sales_amount)) OVER() AS decimal(5,2)) AS pct_total
+FROM gold.fact_sales f
+JOIN gold.dim_products p ON p.product_key = f.product_key
+GROUP BY p.category
+ORDER BY pct_total DESC;</code></pre>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="card section" id="products">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="products" data-view="chart">Chart</button>
+        <button class="tab-btn" data-tab="products" data-view="code">Code</button>
+      </div>
+      <h2>Top Products by Revenue</h2>
+
+      <div id="products-chart">
+        <div class="chart-wrap"><canvas id="productsChart"></canvas></div>
+      </div>
+
+      <div id="products-code" class="hidden">
+        <pre><code class="language-sql">SELECT TOP (10)
+  p.product_name, p.category,
+  SUM(f.sales_amount) AS total_sales,
+  SUM(f.quantity)     AS units
+FROM gold.fact_sales f
+JOIN gold.dim_products p ON p.product_key = f.product_key
+GROUP BY p.product_name, p.category
+ORDER BY total_sales DESC;</code></pre>
+      </div>
+    </div>
+
+    <!-- LTV -->
+    <div class="card section" id="ltv">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="ltv" data-view="chart">Chart</button>
+        <button class="tab-btn" data-tab="ltv" data-view="code">Code</button>
+      </div>
+      <h2>Top Customers (Lifetime Value)</h2>
+
+      <div id="ltv-chart">
+        <div class="chart-wrap"><canvas id="ltvChart"></canvas></div>
+        <p class="meta">My finding: Top 10 customers ≈ $13k LTV each with ~5–6 orders; top 20 ≈ 0.83% of revenue (broad customer base).</p>
+      </div>
+
+      <div id="ltv-code" class="hidden">
+        <pre><code class="language-sql">-- Top 10 customers by LTV + order count
+SELECT TOP (10)
+  c.customer_number,
+  c.first_name, c.last_name,
+  SUM(f.sales_amount)            AS lifetime_value,
+  COUNT(DISTINCT f.order_number) AS orders
+FROM gold.fact_sales f
+JOIN gold.dim_customers c ON c.customer_key = f.customer_key
+GROUP BY c.customer_number, c.first_name, c.last_name
+ORDER BY lifetime_value DESC;
+
+-- Cumulative contribution curve (ranked by LTV)
+WITH cust AS (
+  SELECT c.customer_number, SUM(f.sales_amount) AS ltv
+  FROM gold.fact_sales f
+  JOIN gold.dim_customers c ON c.customer_key = f.customer_key
+  GROUP BY c.customer_number
+),
+r AS (
+  SELECT
+    customer_number,
+    ltv,
+    ROW_NUMBER() OVER (ORDER BY ltv DESC)                      AS rk,
+    SUM(ltv) OVER (ORDER BY ltv DESC ROWS UNBOUNDED PRECEDING) AS cum_ltv,
+    SUM(ltv) OVER ()                                           AS total_ltv
+  FROM cust
+)
+SELECT TOP (20)
+  rk, customer_number, ltv,
+  CAST(cum_ltv*100.0/total_ltv AS decimal(6,2)) AS cumulative_pct
+FROM r
+ORDER BY rk;</code></pre>
+      </div>
+    </div>
+
+    <!-- Repo -->
+    <div class="card">
+      <h2>Repository & Notes</h2>
+      <p><a href="https://github.com/dayronknows/sql-retail-analytics" target="_blank">github.com/dayronknows/sql-retail-analytics</a></p>
+    </div>
+  </div>
+
+  <!-- vendor libs (must load BEFORE our script) -->
+<script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script defer src="https://unpkg.com/prismjs/prism.js"></script>
+<script defer src="https://unpkg.com/prismjs/components/prism-sql.js"></script>
+
+<!-- INTERACTIVITY (your script; keep this LAST) -->
+<script defer>
   const CSV = 'assets/data/';
-  const BUST = `?v=${Date.now()}`; // cache-buster so updates show up immediately
+  const BUST = `?v=${Date.now()}`;
 
   // Tab toggles
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.tab;
-      const view = btn.dataset.view; // 'chart' | 'code'
+      const view = btn.dataset.view;
       document.querySelectorAll(`button[data-tab="${key}"]`).forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(`${key}-chart`)?.classList.toggle('hidden', view !== 'chart');
-      document.getElementById(`${key}-code`)?.classList.toggle('hidden', view !== 'code');
+      document.getElementById(`${key}-code`) ?.classList.toggle('hidden', view !== 'code');
     });
   });
 
-  // CSV loader (more robust + no-store)
+  // CSV loader (uses Papa.parse)
   async function loadCSV(path) {
     try {
       const txt = await fetch(path, { cache: 'no-store' }).then(r => r.ok ? r.text() : Promise.reject(r.status));
       return new Promise((res, rej) => Papa.parse(txt, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
+        header: true, dynamicTyping: true, skipEmptyLines: true,
         transformHeader: h => h.trim(),
-        complete: r => res(r.data),
-        error: rej
+        complete: r => res(r.data), error: rej
       }));
-    } catch (e) {
-      console.warn('CSV load failed:', path, e);
-      return null;
-    }
+    } catch (e) { console.warn('CSV load failed:', path, e); return null; }
   }
 
   // ===== Monthly Trend with Year filters =====
   (async function(){
-    const rows = await loadCSV(CSV + 'monthly_trend.csv' + BUST); // order_year,order_month,total_sales
+    const rows = await loadCSV(CSV + 'monthly_trend.csv' + BUST);
     if(!rows || !rows.length) return;
 
     const years = [...new Set(rows.map(r => r.order_year))].sort((a,b)=>a-b);
@@ -43,7 +271,7 @@
     const selected = new Set(years);
     years.forEach(y => {
       const chip = document.createElement('button');
-      chip.className = "px-3 py-1 rounded-full border border-[var(--border)] text-sm data-[off]:opacity-50 data-[off]:line-through";
+      chip.className = "chip year-chip";
       chip.textContent = y; chip.dataset.year = y;
       chip.onclick = () => { selected.has(y) ? selected.delete(y) : selected.add(y); chip.toggleAttribute('data-off', !selected.has(y)); render(); };
       container.appendChild(chip);
@@ -68,7 +296,7 @@
 
   // ===== Cumulative Sales =====
   (async function(){
-    const rows = await loadCSV(CSV + 'cumulative_sales.csv' + BUST); // month_start,monthly_sales,cumulative_sales
+    const rows = await loadCSV(CSV + 'cumulative_sales.csv' + BUST);
     if(!rows || !rows.length) return;
     const labels = rows.map(r => r.month_start);
     const monthly = rows.map(r => +r.monthly_sales);
@@ -80,9 +308,9 @@
     });
   })();
 
-  // ===== Category Share (fallback to your known % if CSV missing) =====
+  // ===== Category Share =====
   (async function(){
-    let rows = await loadCSV(CSV + 'category_share.csv' + BUST); // category,pct_total
+    let rows = await loadCSV(CSV + 'category_share.csv' + BUST);
     let labels, data;
     if(rows && rows.length){
       rows.sort((a,b)=>b.pct_total-a.pct_total);
@@ -101,7 +329,7 @@
 
   // ===== Top Products =====
   (async function(){
-    const rows = await loadCSV(CSV + 'top_products.csv' + BUST); // product_name,total_sales
+    const rows = await loadCSV(CSV + 'top_products.csv' + BUST);
     if(!rows || !rows.length) return;
     rows.sort((a,b)=>b.total_sales-a.total_sales);
     const labels = rows.map(r => r.product_name);
@@ -115,7 +343,7 @@
 
   // ===== Top Customers (LTV) =====
   (async function(){
-    const rows = await loadCSV(CSV + 'top_customers.csv' + BUST); // customer_number,ltv
+    const rows = await loadCSV(CSV + 'top_customers.csv' + BUST);
     if(!rows || !rows.length) return;
     rows.sort((a,b)=>b.ltv-a.ltv);
     const top = rows.slice(0,10);
