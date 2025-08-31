@@ -1,1 +1,85 @@
-<!doctype html><meta charset="utf-8"><title>It works</title><h1>It works</h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retail Sales SQL Portfolio — dayronknows</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism.css">
+  <style>
+    :root{--bg:#0b0d11;--card:#121621;--muted:#a9b0c0;--border:#1f2430}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#e7e9ee}
+    .wrap{max-width:980px;margin:48px auto;padding:0 20px} h1{font-size:2rem;margin:0 0 6px} h2{font-size:1.2rem;margin:22px 0 10px}
+    p{line-height:1.55} .meta{color:var(--muted);font-size:.95rem}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin:14px 0}
+    pre{background:#0f1320;border:1px solid var(--border);border-radius:12px;overflow:auto} code{font-size:.95rem}
+    img{max-width:100%;border-radius:10px;border:1px solid var(--border)} .pill{display:inline-block;padding:4px 10px;border:1px solid var(--border);border-radius:999px;margin-right:8px;background:#0e1422}
+    .grid{display:grid;gap:14px;grid-template-columns:1fr 1fr} @media (max-width:860px){.grid{grid-template-columns:1fr}} a{color:#8ab4ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Retail Sales SQL Portfolio</h1>
+    <div class="meta">Bronze → Silver → <b>Gold</b> (star schema: <span class="pill">gold.fact_sales</span> <span class="pill">gold.dim_customers</span> <span class="pill">gold.dim_products</span>)</div>
+
+    <div class="card">
+      <h2>Overview</h2>
+      <p>I built a SQL analytics warehouse from raw CRM/ERP CSVs (bronze), cleaned to standardized tables (silver), and modeled an analytics-ready star schema (gold). Then I answered business questions about sales trends, customer lifetime value, product performance, and segmentation.</p>
+    </div>
+
+    <div class="card">
+      <h2>Monthly Sales Trend</h2>
+      <pre><code class="language-sql">SELECT
+  YEAR(order_date) AS order_year,
+  MONTH(order_date) AS order_month,
+  SUM(sales_amount) AS total_sales,
+  COUNT(DISTINCT customer_key) AS unique_customers
+FROM gold.fact_sales
+WHERE order_date IS NOT NULL
+GROUP BY YEAR(order_date), MONTH(order_date)
+ORDER BY order_year, order_month;</code></pre>
+      <p class="meta"><em>Insight:</em> Sales peak in Nov–Dec each year (holiday seasonality).</p>
+      <!-- Replace with your screenshot when ready -->
+      <!-- <img src="assets/screenshots/01_monthly_trend.png" alt="Monthly trend"> -->
+    </div>
+
+    <div class="card">
+      <h2>Cumulative Sales (Running Total)</h2>
+      <pre><code class="language-sql">WITH m AS (
+  SELECT DATEFROMPARTS(YEAR(order_date), MONTH(order_date), 1) AS month_start,
+         SUM(sales_amount) AS monthly_sales
+  FROM gold.fact_sales
+  WHERE order_date IS NOT NULL
+  GROUP BY DATEFROMPARTS(YEAR(order_date), MONTH(order_date), 1)
+)
+SELECT month_start,
+       monthly_sales,
+       SUM(monthly_sales) OVER (ORDER BY month_start) AS cumulative_sales
+FROM m
+ORDER BY month_start;</code></pre>
+      <!-- <img src="assets/screenshots/02_cumulative.png" alt="Cumulative chart"> -->
+    </div>
+
+    <div class="card">
+      <h2>Top Products by Revenue</h2>
+      <pre><code class="language-sql">SELECT TOP (10)
+  p.product_name, p.category,
+  SUM(f.sales_amount) AS total_sales, SUM(f.quantity) AS units
+FROM gold.fact_sales f
+JOIN gold.dim_products p ON p.product_key = f.product_key
+GROUP BY p.product_name, p.category
+ORDER BY total_sales DESC;</code></pre>
+      <!-- <img src="assets/screenshots/03_top_products.png" alt="Top products"> -->
+    </div>
+
+    <div class="card">
+      <h2>Repo</h2>
+      <p><a href="https://github.com/dayronknows/sql-retail-analytics">github.com/dayronknows/sql-retail-analytics</a></p>
+    </div>
+  </div>
+  <script src="https://unpkg.com/prismjs/prism.js"></script>
+  <script src="https://unpkg.com/prismjs/components/prism-sql.js"></script>
+</body>
+</html>
